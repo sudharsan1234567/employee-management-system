@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Leave Requests')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('my-leaves')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h2 class="fw-bold mb-0">My Leave Requests</h2>
+            <p class="text-muted mb-0">View the status of your leave applications.</p>
+        </div>
+        <a th:href="@{/employee/leave/apply}" class="btn btn-primary mt-2 mt-md-0">
+            <i class="bi bi-plus-lg me-1"></i>Apply for Leave
+        </a>
+    </div>
+
+    <div class="page-content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="card-table">
+            <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">Leave History</h5>
+                <span class="text-muted small" th:text="${#lists.size(leaves)} + ' Requests'">0 Requests</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Leave Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Days</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Admin Response</th>
+                            <th>Applied On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="leave : ${leaves}">
+                            <td class="fw-semibold" th:text="${leave.leaveType}">Type</td>
+                            <td th:text="${#temporals.format(leave.fromDate, 'dd MMM yyyy')}">From</td>
+                            <td th:text="${#temporals.format(leave.toDate, 'dd MMM yyyy')}">To</td>
+                            <td th:text="${leave.toDate.toEpochDay() - leave.fromDate.toEpochDay() + 1}">1</td>
+                            <td class="text-muted small" style="max-width:180px;" th:text="${leave.reason}">Reason</td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-1"
+                                      th:classappend="${leave.status.name() == 'APPROVED' ? 'bg-success' :
+                                                        leave.status.name() == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark'}"
+                                      th:text="${leave.status}">PENDING</span>
+                            </td>
+                            <td class="text-muted small" style="max-width:180px;">
+                                <span th:if="${leave.adminResponse != null and !leave.adminResponse.isEmpty()}" th:text="${leave.adminResponse}">Response</span>
+                                <span th:if="${leave.adminResponse == null or leave.adminResponse.isEmpty()}" class="text-muted">—</span>
+                            </td>
+                            <td class="text-muted small" th:text="${leave.appliedAt != null ? #temporals.format(leave.appliedAt, 'dd MMM yyyy') : ''}">Date</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(leaves)}">
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-calendar2-x fs-1 d-block mb-3"></i>
+                                <h5>No leave requests yet</h5>
+                                <p class="mb-0">Click "Apply for Leave" to submit your first request.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

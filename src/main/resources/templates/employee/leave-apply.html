@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Apply for Leave')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('my-leaves')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-0">Apply for Leave</h2>
+            <p class="text-muted mb-0">Submit a new leave request for approval.</p>
+        </div>
+        <a th:href="@{/employee/leave}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to My Leaves
+        </a>
+    </div>
+
+    <div class="page-content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="card-table p-4" style="max-width: 640px;">
+            <form th:action="@{/employee/leave/apply}" method="post" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="mb-3">
+                    <label for="leaveType" class="form-label fw-semibold">Leave Type <span class="text-danger">*</span></label>
+                    <select id="leaveType" name="leaveType" class="form-select" required>
+                        <option value="">-- Select Leave Type --</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Annual Leave">Annual Leave</option>
+                        <option value="Maternity Leave">Maternity Leave</option>
+                        <option value="Paternity Leave">Paternity Leave</option>
+                        <option value="Emergency Leave">Emergency Leave</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="fromDate" class="form-label fw-semibold">From Date <span class="text-danger">*</span></label>
+                        <input type="date" id="fromDate" name="fromDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="toDate" class="form-label fw-semibold">To Date <span class="text-danger">*</span></label>
+                        <input type="date" id="toDate" name="toDate" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="reason" class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
+                    <textarea id="reason" name="reason" class="form-control" rows="4"
+                              placeholder="Please describe the reason for your leave..." required></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-1"></i>Submit Request
+                    </button>
+                    <a th:href="@{/employee/leave}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

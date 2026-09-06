@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${employee.firstName + ' ' + employee.lastName})}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('employees')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div class="d-flex align-items-center mb-3 mb-md-0">
+            <a th:href="@{/employees}" class="btn btn-light text-muted me-3 rounded-circle" style="width: 40px; height: 40px; padding: 0; line-height: 40px; text-align: center;">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="fw-bold mb-0" th:text="${employee.firstName + ' ' + employee.lastName}">Name</h2>
+                <p class="text-muted mb-0"><span th:text="${employee.jobTitle}">Job Title</span> | <span th:text="${employee.employeeCode}">Code</span></p>
+            </div>
+        </div>
+        <div class="d-flex gap-2" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/employees/{id}/edit(id=${employee.id})}" class="btn btn-primary">
+                <i class="bi bi-pencil me-1"></i> Edit
+            </a>
+            <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post" class="delete-form m-0">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="row g-4">
+            <div class="col-12 col-xl-4">
+                <div class="card-table p-4 h-100">
+                    <div class="text-center mb-4 pb-4 border-bottom">
+                        <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1" th:text="${employee.firstName + ' ' + employee.lastName}">Name</h4>
+                        <span class="badge rounded-pill px-3 py-2 fw-medium mb-2" 
+                              th:classappend="'badge-' + ${#strings.toLowerCase(employee.status)}"
+                              th:text="${employee.status}">Status</span>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Contact Information</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex">
+                            <i class="bi bi-envelope text-muted me-3 fs-5"></i>
+                            <div>
+                                <div class="small text-muted mb-1">Email</div>
+                                <div class="fw-medium text-dark" th:text="${employee.email}">email@example.com</div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <i class="bi bi-telephone text-muted me-3 fs-5"></i>
+                            <div>
+                                <div class="small text-muted mb-1">Phone</div>
+                                <div class="fw-medium text-dark" th:text="${employee.phone ?: 'N/A'}">+1 234 567 890</div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <i class="bi bi-geo-alt text-muted me-3 fs-5"></i>
+                            <div>
+                                <div class="small text-muted mb-1">Address</div>
+                                <div class="fw-medium text-dark" th:text="${employee.address ?: 'N/A'}">Address</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-8">
+                <div class="card-table p-4 h-100">
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary">Employment Information</h5>
+                    <div class="row g-4 mb-5">
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Employee Code</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${employee.employeeCode}">EMP-001</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Department</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${employee.department?.name}">Department</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Job Title</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${employee.jobTitle}">Job Title</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Hire Date</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${employee.hireDate}">2023-01-01</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Salary</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${#numbers.formatCurrency(employee.salary)}">$0.00</div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom text-primary">Personal Details</h5>
+                    <div class="row g-4">
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Date of Birth</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${employee.dateOfBirth ?: 'N/A'}">1990-01-01</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted mb-1">Gender</div>
+                            <div class="fw-medium fs-6 text-dark" th:text="${employee.gender ?: 'N/A'}">Gender</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

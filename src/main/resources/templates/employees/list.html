@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Employees')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('employees')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h2 class="fw-bold mb-0">Employees</h2>
+            <p class="text-muted mb-0">Manage your workforce, view details, and filter records.</p>
+        </div>
+        <div class="mt-3 mt-md-0" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/employees/new}" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Add Employee
+            </a>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="card-table mb-4 p-4">
+            <form method="get" th:action="@{/employees}" class="row g-3 align-items-end">
+                <div class="col-12 col-md-4">
+                    <label class="form-label small fw-semibold text-muted text-uppercase">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" th:value="${search}" class="form-control" placeholder="Name...">
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label small fw-semibold text-muted text-uppercase">Department</label>
+                    <select name="departmentId" class="form-select">
+                        <option value="">All Departments</option>
+                        <option th:each="d : ${departments}" 
+                                th:value="${d.id}" 
+                                th:text="${d.name}"
+                                th:selected="${d.id == selectedDepartmentId}"></option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label small fw-semibold text-muted text-uppercase">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option th:each="s : ${statuses}" 
+                                th:value="${s}" 
+                                th:text="${s}"
+                                th:selected="${s == selectedStatus}"></option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                    <a th:href="@{/employees}" class="btn btn-light border" title="Clear Filters"><i class="bi bi-x-lg"></i></a>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-table">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Employee</th>
+                            <th>Contact</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="emp : ${employees}">
+                            <td class="fw-semibold text-muted" th:text="${emp.employeeCode}">EMP-001</td>
+                            <td>
+                                <div class="fw-bold text-dark" th:text="${emp.firstName + ' ' + emp.lastName}">Name</div>
+                                <div class="small text-muted" th:text="${emp.jobTitle}">Job Title</div>
+                            </td>
+                            <td>
+                                <div class="small"><i class="bi bi-envelope me-1 text-muted"></i> <span th:text="${emp.email}"></span></div>
+                                <div class="small mt-1" th:if="${emp.phone}"><i class="bi bi-telephone me-1 text-muted"></i> <span th:text="${emp.phone}"></span></div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border px-2 py-1" th:text="${emp.department?.name}">Dept</span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-2 fw-medium" 
+                                      th:classappend="'badge-' + ${#strings.toLowerCase(emp.status)}"
+                                      th:text="${emp.status}">Status</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/employees/{id}(id=${emp.id})}" class="btn btn-outline-secondary" title="View"><i class="bi bi-eye"></i></a>
+                                    
+                                    <th:block sec:authorize="hasRole('ADMIN')">
+                                        <a th:href="@{/employees/{id}/edit(id=${emp.id})}" class="btn btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                        <form th:action="@{/employees/{id}/delete(id=${emp.id})}" method="post" class="d-inline delete-form">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                            <button type="submit" class="btn btn-outline-danger" style="border-top-left-radius:0; border-bottom-left-radius:0;" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(employees)}">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                    <h5>No employees found</h5>
+                                    <p class="mb-0">Try adjusting your search or filters.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

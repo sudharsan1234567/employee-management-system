@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Employee Dashboard')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('emp-dashboard')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header">
+        <h2 class="fw-bold mb-0" th:text="'Welcome, ' + ${employee.firstName} + ' ' + ${employee.lastName}">Welcome Employee</h2>
+        <p class="text-muted mb-0">Employee Self-Service Portal &bull; Daily Operations</p>
+    </div>
+
+    <div class="page-content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <!-- Employee Info Header Card -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-md-3">
+                <div class="kpi-card border-start border-primary border-4">
+                    <div class="kpi-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-upc-scan"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Employee Code</div>
+                        <h4 class="fw-bold mb-0 text-primary" th:text="${employee.employeeCode}">EMP-001</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <div class="kpi-card border-start border-info border-4">
+                    <div class="kpi-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-diagram-3-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Department</div>
+                        <h5 class="fw-bold mb-0 text-dark" th:text="${employee.department?.name}">Engineering</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <div class="kpi-card border-start border-warning border-4">
+                    <div class="kpi-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Designation</div>
+                        <h5 class="fw-bold mb-0 text-dark" th:text="${employee.jobTitle}">Software Engineer</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <div class="kpi-card border-start border-success border-4">
+                    <div class="kpi-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Status</div>
+                        <span class="badge rounded-pill px-3 py-2 mt-1"
+                              th:classappend="'badge-' + ${#strings.toLowerCase(employee.status)}"
+                              th:text="${employee.status}">ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance & Quick Actions Section -->
+        <div class="row g-4 mb-4">
+            <!-- Today's Attendance Widget -->
+            <div class="col-12 col-lg-7">
+                <div class="card-table h-100 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-clock-history text-primary me-2"></i> Today's Attendance
+                        </h5>
+                        <span class="text-muted small" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM d, yyyy')}">Date</span>
+                    </div>
+
+                    <div class="p-4 rounded-3 border bg-light mb-4 text-center">
+                        <!-- Not Checked In -->
+                        <div th:if="${todayAttendance == null}">
+                            <div class="text-muted mb-2"><i class="bi bi-geo-alt fs-1 text-secondary"></i></div>
+                            <h4 class="fw-bold text-dark">You haven't checked in yet today</h4>
+                            <p class="text-muted small mb-3">Record your arrival time to mark your daily presence.</p>
+                            <form th:action="@{/employee/attendance/check-in}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Check In Now
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Checked In (Not Checked Out) -->
+                        <div th:if="${todayAttendance != null and todayAttendance.checkOut == null}">
+                            <div class="text-success mb-2"><i class="bi bi-check-circle-fill fs-1"></i></div>
+                            <h4 class="fw-bold text-success">Currently Checked In</h4>
+                            <p class="text-muted mb-3">
+                                Check-in recorded at: 
+                                <strong class="text-dark" th:text="${#temporals.format(todayAttendance.checkIn, 'hh:mm:ss a')}">09:15 AM</strong>
+                                &bull;
+                                Status: <span class="badge bg-primary" th:text="${todayAttendance.status}">PRESENT</span>
+                            </p>
+                            <form th:action="@{/employee/attendance/check-out}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-lg px-4 shadow-sm">
+                                    <i class="bi bi-box-arrow-right me-1"></i> Check Out
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Completed (Checked In & Checked Out) -->
+                        <div th:if="${todayAttendance != null and todayAttendance.checkOut != null}">
+                            <div class="text-primary mb-2"><i class="bi bi-check2-all fs-1"></i></div>
+                            <h4 class="fw-bold text-primary">Day Complete</h4>
+                            <p class="text-muted mb-0">
+                                In: <strong th:text="${#temporals.format(todayAttendance.checkIn, 'hh:mm a')}">09:00 AM</strong>
+                                &bull;
+                                Out: <strong th:text="${#temporals.format(todayAttendance.checkOut, 'hh:mm a')}">05:30 PM</strong>
+                                &bull;
+                                Status: <span class="badge bg-success" th:text="${todayAttendance.status}">PRESENT</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">Daily work grace period starts at 09:30 AM.</span>
+                        <a th:href="@{/employee/attendance}" class="btn btn-sm btn-outline-primary">View Full History</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-12 col-lg-5">
+                <div class="card-table h-100 p-4">
+                    <h5 class="fw-bold mb-4">
+                        <i class="bi bi-grid-fill text-primary me-2"></i> Quick Actions
+                    </h5>
+                    <div class="d-grid gap-3">
+                        <a th:href="@{/employee/profile}" class="btn btn-outline-primary p-3 text-start d-flex align-items-center">
+                            <i class="bi bi-person-badge fs-3 me-3 text-primary"></i>
+                            <div>
+                                <div class="fw-bold">My Profile</div>
+                                <div class="small text-muted">View personal & employment records</div>
+                            </div>
+                        </a>
+                        <a th:href="@{/employee/attendance}" class="btn btn-outline-success p-3 text-start d-flex align-items-center">
+                            <i class="bi bi-calendar2-check fs-3 me-3 text-success"></i>
+                            <div>
+                                <div class="fw-bold">My Attendance</div>
+                                <div class="small text-muted">Review attendance history & timestamps</div>
+                            </div>
+                        </a>
+                        <a th:href="@{/employee/change-password}" class="btn btn-outline-secondary p-3 text-start d-flex align-items-center">
+                            <i class="bi bi-key-fill fs-3 me-3 text-secondary"></i>
+                            <div>
+                                <div class="fw-bold">Change Password</div>
+                                <div class="small text-muted">Update your portal account credentials</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Attendance Log -->
+        <div class="card-table">
+            <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">Recent Attendance Logs</h5>
+                <a th:href="@{/employee/attendance}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="att : ${recentAttendance}">
+                            <td class="fw-semibold" th:text="${#temporals.format(att.attendanceDate, 'EEE, MMM d, yyyy')}">Date</td>
+                            <td th:text="${att.checkIn != null ? #temporals.format(att.checkIn, 'hh:mm:ss a') : '--'}">Check In</td>
+                            <td th:text="${att.checkOut != null ? #temporals.format(att.checkOut, 'hh:mm:ss a') : '--'}">Check Out</td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-1"
+                                      th:classappend="${att.status.name() == 'PRESENT' ? 'bg-success' : (att.status.name() == 'LATE' ? 'bg-warning text-dark' : 'bg-secondary')}"
+                                      th:text="${att.status}">STATUS</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentAttendance)}">
+                            <td colspan="4" class="text-center text-muted py-4">No attendance records found yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

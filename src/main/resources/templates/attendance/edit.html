@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Attendance')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('attendance')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-0">Edit Attendance</h2>
+            <p class="text-muted mb-0">Manually adjust check-in / check-out times for this record.</p>
+        </div>
+        <a href="/attendance" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Attendance
+        </a>
+    </div>
+
+    <div class="page-content">
+        <div class="card-table p-4" style="max-width: 640px;">
+            <!-- Employee info card -->
+            <div class="mb-4 p-3 rounded bg-light border">
+                <div class="fw-bold fs-5" th:text="${attendance.employee.firstName + ' ' + attendance.employee.lastName}">Name</div>
+                <div class="text-muted small" th:text="${attendance.employee.employeeCode}">Code</div>
+                <div class="text-muted small mt-1">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    <span th:text="${#temporals.format(attendance.attendanceDate, 'EEEE, MMMM d, yyyy')}">Date</span>
+                </div>
+            </div>
+
+            <form th:action="@{/attendance/{id}/edit(id=${attendance.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Check-In Time <span class="text-danger">*</span></label>
+                    <input type="datetime-local" id="checkIn" name="checkIn" class="form-control"
+                           th:value="${attendance.checkIn != null ? #temporals.format(attendance.checkIn, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                           required>
+                    <div class="form-text">Date and time the employee checked in.</div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Check-Out Time</label>
+                    <input type="datetime-local" id="checkOut" name="checkOut" class="form-control"
+                           th:value="${attendance.checkOut != null ? #temporals.format(attendance.checkOut, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                    <div class="form-text">Leave blank if the employee has not checked out yet.</div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>Save Changes
+                    </button>
+                    <a href="/attendance" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

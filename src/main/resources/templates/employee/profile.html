@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Profile')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('emp-profile')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-0">My Profile</h2>
+            <p class="text-muted mb-0">Your verified personal and employment records</p>
+        </div>
+        <a th:href="@{/employee/dashboard}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="page-content">
+        <!-- Profile Banner -->
+        <div class="card-table p-4 mb-4">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div class="d-flex align-items-center">
+                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-2 me-4 shadow" style="width:72px; height:72px;">
+                        <span th:text="${#strings.substring(employee.firstName, 0, 1).toUpperCase()} + ${#strings.substring(employee.lastName, 0, 1).toUpperCase()}">JD</span>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-1" th:text="${employee.firstName + ' ' + employee.lastName}">John Doe</h3>
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-briefcase me-1"></i> <span th:text="${employee.jobTitle}">Job Title</span> &bull; 
+                            <i class="bi bi-diagram-3 me-1"></i> <span th:text="${employee.department?.name}">Department</span>
+                        </p>
+                        <span class="badge rounded-pill px-3 py-1"
+                              th:classappend="'badge-' + ${#strings.toLowerCase(employee.status)}"
+                              th:text="${employee.status}">ACTIVE</span>
+                    </div>
+                </div>
+                <div>
+                    <a th:href="@{/employee/change-password}" class="btn btn-outline-primary">
+                        <i class="bi bi-key me-1"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Personal Information -->
+            <div class="col-12 col-lg-6">
+                <div class="card-table p-4 h-100">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-primary">
+                        <i class="bi bi-person-lines-fill me-2"></i> Personal Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">First Name</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.firstName}">John</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Last Name</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.lastName}">Doe</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Email Address</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.email}">john@example.com</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Phone Number</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.phone ?: 'Not provided'}">+1 234 567</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Gender</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.gender ?: 'Not specified'}">Male</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Date of Birth</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.dateOfBirth != null ? #temporals.format(employee.dateOfBirth, 'MMMM d, yyyy') : 'Not provided'}">Jan 1, 1990</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="text-muted small fw-semibold text-uppercase">Address</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.address ?: 'No address on file'}">123 Street</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Information -->
+            <div class="col-12 col-lg-6">
+                <div class="card-table p-4 h-100">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-primary">
+                        <i class="bi bi-building-check me-2"></i> Employment Details
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Employee Code</div>
+                            <div class="fw-bold text-primary fs-5" th:text="${employee.employeeCode}">EMP-001</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Employment Status</div>
+                            <span class="badge rounded-pill px-3 py-2 mt-1"
+                                  th:classappend="'badge-' + ${#strings.toLowerCase(employee.status)}"
+                                  th:text="${employee.status}">ACTIVE</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Department</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.department?.name}">Engineering</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Designation / Role</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.jobTitle}">Lead Developer</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Date of Joining</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${#temporals.format(employee.hireDate, 'MMMM d, yyyy')}">Jan 15, 2024</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold text-uppercase">Record Created</div>
+                            <div class="fw-semibold text-dark fs-6" th:text="${employee.createdAt != null ? #temporals.format(employee.createdAt, 'MMM d, yyyy') : '--'}">Date</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4 mb-0 small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Sensitive records (Employee Code, Department, Status, Joining Date) can only be updated by the HR Administrator.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

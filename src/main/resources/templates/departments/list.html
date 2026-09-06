@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Departments')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('departments')}"></div>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-wrapper">
+    <div class="content-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h2 class="fw-bold mb-0">Departments</h2>
+            <p class="text-muted mb-0">Manage organizational departments.</p>
+        </div>
+        <div class="mt-3 mt-md-0" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/departments/new}" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Add Department
+            </a>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="card-table">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">Department Name</th>
+                            <th style="width: 50%">Description</th>
+                            <th style="width: 25%" class="text-end" sec:authorize="hasRole('ADMIN')">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="dept : ${departments}">
+                            <td class="fw-semibold text-dark">
+                                <i class="bi bi-diagram-3 text-primary me-2"></i>
+                                <span th:text="${dept.name}">Name</span>
+                            </td>
+                            <td class="text-muted" th:text="${dept.description ?: 'No description provided.'}">Desc</td>
+                            <td class="text-end" sec:authorize="hasRole('ADMIN')">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/departments/{id}/edit(id=${dept.id})}" class="btn btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                    <form th:action="@{/departments/{id}/delete(id=${dept.id})}" method="post" class="d-inline delete-form">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button type="submit" class="btn btn-outline-danger" style="border-top-left-radius:0; border-bottom-left-radius:0;" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(departments)}">
+                            <td colspan="3" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                    <h5>No departments found</h5>
+                                    <p class="mb-0">Add a new department to get started.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
