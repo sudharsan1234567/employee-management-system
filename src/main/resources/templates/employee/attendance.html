@@ -39,7 +39,7 @@
         <div th:replace="~{fragments/layout :: alerts}"></div>
 
         <!-- Attendance Table -->
-        <div class="card-table">
+        <div class="card-table desktop-only">
             <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold mb-0">Attendance Log</h5>
                 <span class="text-muted small" th:text="${#lists.size(attendanceList)} + ' Total Records'">0 Records</span>
@@ -90,6 +90,36 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="card-table mobile-only" aria-label="My attendance records">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2">
+                <h5 class="fw-bold mb-0">Attendance Log</h5>
+                <span class="text-muted small text-end" th:text="${#lists.size(attendanceList)} + ' Total'">0 Records</span>
+            </div>
+            <div class="mobile-records">
+                <article th:each="att : ${attendanceList}" class="record-card">
+                    <div class="record-card-header">
+                        <div class="fw-bold" th:text="${#temporals.format(att.attendanceDate, 'EEEE, MMM d, yyyy')}">Date</div>
+                        <span class="badge rounded-pill px-3 py-1 flex-shrink-0"
+                              th:classappend="${att.status.name() == 'PRESENT' ? 'bg-success' : (att.status.name() == 'LATE' ? 'bg-warning text-dark' : 'bg-secondary')}"
+                              th:text="${att.status}">PRESENT</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Check-in</span>
+                        <span class="record-card-value text-success fw-semibold" th:text="${att.checkIn != null ? #temporals.format(att.checkIn, 'hh:mm:ss a') : '--'}">09:00 AM</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Check-out</span>
+                        <span class="record-card-value text-danger fw-semibold" th:text="${att.checkOut != null ? #temporals.format(att.checkOut, 'hh:mm:ss a') : '--'}">05:30 PM</span>
+                    </div>
+                </article>
+                <div th:if="${#lists.isEmpty(attendanceList)}" class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar-x fs-1 d-block mb-3"></i>
+                    <h5>No attendance records yet</h5>
+                    <p class="mb-0">Your daily check-in and check-out logs will be recorded here.</p>
+                </div>
             </div>
         </div>
     </div>

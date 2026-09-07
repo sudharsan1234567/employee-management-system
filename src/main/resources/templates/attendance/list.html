@@ -70,7 +70,7 @@
         </div>
 
         <!-- Attendance List Table -->
-        <div class="card-table">
+        <div class="card-table desktop-only">
             <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold mb-0">Attendance Records</h5>
                 <span class="text-muted small" th:text="${#lists.size(attendanceList)} + ' Total Records'">0 Records</span>
@@ -149,6 +149,66 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="card-table mobile-only" aria-label="Attendance records">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2">
+                <h5 class="fw-bold mb-0">Attendance Records</h5>
+                <span class="text-muted small text-end" th:text="${#lists.size(attendanceList)} + ' Total'">0 Total</span>
+            </div>
+            <div class="mobile-records">
+                <article th:each="att : ${attendanceList}" class="record-card">
+                    <div class="record-card-header">
+                        <div>
+                            <div class="fw-bold" th:text="${att.employee.firstName + ' ' + att.employee.lastName}">Name</div>
+                            <div class="small text-muted" th:text="${att.employee.employeeCode}">Code</div>
+                        </div>
+                        <span class="badge rounded-pill px-3 py-1 flex-shrink-0"
+                              th:classappend="${att.status.name() == 'PRESENT' ? 'bg-success' : (att.status.name() == 'LATE' ? 'bg-warning text-dark' : 'bg-secondary')}"
+                              th:text="${att.status}">PRESENT</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Date</span>
+                        <span class="record-card-value" th:text="${#temporals.format(att.attendanceDate, 'EEE, MMM d, yyyy')}">Date</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Department</span>
+                        <span class="record-card-value" th:text="${att.employee.department?.name}">Department</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Check-in</span>
+                        <span class="record-card-value text-success fw-semibold" th:text="${att.checkIn != null ? #temporals.format(att.checkIn, 'hh:mm a') : '--'}">09:00 AM</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Check-out</span>
+                        <span class="record-card-value text-danger fw-semibold" th:text="${att.checkOut != null ? #temporals.format(att.checkOut, 'hh:mm a') : '--'}">05:30 PM</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Working hours</span>
+                        <span class="record-card-value text-primary fw-semibold"
+                              th:if="${att.checkIn != null and att.checkOut != null}"
+                              th:with="mins=${T(java.time.Duration).between(att.checkIn, att.checkOut).toMinutes()}"
+                              th:text="${mins / 60} + 'h ' + ${mins % 60} + 'm'">8h 0m</span>
+                        <span class="record-card-value text-muted" th:if="${att.checkIn == null or att.checkOut == null}">--</span>
+                    </div>
+                    <div class="record-card-actions">
+                        <a th:href="@{/attendance/{id}/edit(id=${att.id})}" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil me-1"></i> Edit
+                        </a>
+                        <form th:action="@{/attendance/{id}/delete(id=${att.id})}" method="post" class="m-0">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Delete this attendance record?')">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </article>
+                <div th:if="${#lists.isEmpty(attendanceList)}" class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar2-x fs-1 d-block mb-3"></i>
+                    <h5>No attendance records found</h5>
+                    <p class="mb-0">Try changing your search filters.</p>
+                </div>
             </div>
         </div>
     </div>

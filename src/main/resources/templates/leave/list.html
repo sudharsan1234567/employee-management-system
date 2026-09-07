@@ -17,7 +17,7 @@
     <div class="page-content">
         <div th:replace="~{fragments/layout :: alerts}"></div>
 
-        <div class="card-table">
+        <div class="card-table desktop-only">
             <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold mb-0">All Leave Requests</h5>
                 <span class="text-muted small" th:text="${#lists.size(leaves)} + ' Total'">0</span>
@@ -100,6 +100,73 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="card-table mobile-only" aria-label="Leave requests">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2">
+                <h5 class="fw-bold mb-0">Leave Requests</h5>
+                <span class="text-muted small text-end" th:text="${#lists.size(leaves)} + ' Total'">0 Total</span>
+            </div>
+            <div class="mobile-records">
+                <article th:each="leave : ${leaves}" class="record-card">
+                    <div class="record-card-header">
+                        <div>
+                            <div class="fw-bold" th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}">Name</div>
+                            <div class="small text-muted" th:text="${leave.employee.employeeCode}">Code</div>
+                        </div>
+                        <span class="badge rounded-pill px-3 py-1 flex-shrink-0"
+                              th:classappend="${leave.status.name() == 'APPROVED' ? 'bg-success' : leave.status.name() == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark'}"
+                              th:text="${leave.status}">PENDING</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Leave type</span>
+                        <span class="record-card-value" th:text="${leave.leaveType}">Type</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Dates</span>
+                        <span class="record-card-value" th:text="${#temporals.format(leave.fromDate, 'dd MMM yyyy') + ' - ' + #temporals.format(leave.toDate, 'dd MMM yyyy')}">Dates</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Days</span>
+                        <span class="record-card-value" th:text="${leave.toDate.toEpochDay() - leave.fromDate.toEpochDay() + 1}">1</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Reason</span>
+                        <span class="record-card-value text-muted" th:text="${leave.reason}">Reason</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Applied on</span>
+                        <span class="record-card-value text-muted" th:text="${leave.appliedAt != null ? #temporals.format(leave.appliedAt, 'dd MMM yyyy') : ''}">Date</span>
+                    </div>
+                    <div th:if="${leave.status.name() == 'PENDING'}" class="record-card-actions flex-column align-items-stretch">
+                        <form th:action="@{/leave/{id}/approve(id=${leave.id})}" method="post" class="w-100">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <label class="visually-hidden" th:for="${'approve-response-' + leave.id}">Approval response</label>
+                            <div class="d-flex flex-column gap-2">
+                                <input type="text" th:id="${'approve-response-' + leave.id}" name="adminResponse" class="form-control" placeholder="Approval response (optional)">
+                                <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-lg me-1"></i> Approve</button>
+                            </div>
+                        </form>
+                        <form th:action="@{/leave/{id}/reject(id=${leave.id})}" method="post" class="w-100">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <label class="visually-hidden" th:for="${'reject-response-' + leave.id}">Rejection reason</label>
+                            <div class="d-flex flex-column gap-2">
+                                <input type="text" th:id="${'reject-response-' + leave.id}" name="adminResponse" class="form-control" placeholder="Rejection reason (optional)">
+                                <button type="submit" class="btn btn-danger w-100"><i class="bi bi-x-lg me-1"></i> Reject</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div th:if="${leave.status.name() != 'PENDING'}" class="record-card-row">
+                        <span class="record-card-label">Admin response</span>
+                        <span class="record-card-value text-muted" th:text="${leave.adminResponse != null and !leave.adminResponse.isEmpty() ? leave.adminResponse : '—'}">—</span>
+                    </div>
+                </article>
+                <div th:if="${#lists.isEmpty(leaves)}" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                    <h5>No leave requests</h5>
+                    <p class="mb-0">No leave requests have been submitted yet.</p>
+                </div>
             </div>
         </div>
     </div>

@@ -18,6 +18,10 @@
     box-sizing: border-box;
 }
 
+.min-w-0 {
+    min-width: 0;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--light-bg);
@@ -133,6 +137,8 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-color);
     overflow: hidden;
+    width: 100%;
+    min-width: 0;
 }
 
 .table th {
@@ -163,6 +169,69 @@ body {
     min-width: 620px;
 }
 
+.mobile-only {
+    display: none !important;
+}
+
+.record-card {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    background: #fff;
+}
+
+.record-card + .record-card {
+    margin-top: 0.75rem;
+}
+
+.record-card-header,
+.record-card-row,
+.record-card-actions {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.record-card-header {
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.record-card-row {
+    padding: 0.35rem 0;
+}
+
+.record-card-label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.record-card-value {
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.record-card-actions {
+    justify-content: flex-start;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.record-card-actions .btn {
+    min-height: 40px;
+}
+
+.mobile-records {
+    padding: 0.75rem;
+}
+
 /* Badges */
 .badge-active { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color); }
 .badge-inactive { background-color: rgba(100, 116, 139, 0.1); color: var(--secondary-color); }
@@ -176,6 +245,8 @@ body {
     padding: 2rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-color);
+    width: 100%;
+    min-width: 0;
 }
 
 .form-label {
@@ -188,6 +259,21 @@ body {
     padding: 0.6rem 1rem;
     border-color: var(--border-color);
     border-radius: 8px;
+    max-width: 100%;
+}
+
+textarea.form-control {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.btn {
+    white-space: normal;
+}
+
+.modal-dialog {
+    width: auto;
+    max-width: calc(100% - 2rem);
 }
 
 .form-control:focus, .form-select:focus {
@@ -329,8 +415,27 @@ body {
         border-radius: 8px;
     }
 
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
+
     .form-card {
         padding: 1rem;
+    }
+
+    .form-card form > .d-flex.gap-2,
+    .card-table form > .d-flex.gap-2 {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-card form > .d-flex.gap-2 .btn,
+    .card-table form > .d-flex.gap-2 .btn {
+        width: 100%;
     }
 
     .card-table > .p-4,
@@ -356,9 +461,28 @@ body {
         min-height: 42px;
     }
 
+    .btn-group,
+    .record-card-actions {
+        flex-wrap: wrap;
+    }
+
+    .record-card-actions .btn,
+    .record-card-actions form {
+        flex: 1 1 auto;
+    }
+
     .login-card {
         width: calc(100% - 2rem);
         padding: 2rem 1.25rem;
+    }
+
+    .login-card .input-group-text {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .login-card .btn-lg {
+        min-height: 48px;
     }
 
     .alert {
@@ -369,6 +493,15 @@ body {
 @media (max-width: 575.98px) {
     .content-header {
         align-items: flex-start !important;
+    }
+
+    .profile-banner-content {
+        align-items: flex-start !important;
+    }
+
+    .profile-banner-content .avatar {
+        margin-right: 0.75rem !important;
+        flex: 0 0 auto;
     }
 
     .content-header .btn {
@@ -398,6 +531,31 @@ body {
     }
 
     .form-card .d-flex.justify-content-end .btn {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        max-width: calc(100% - 1rem);
+        margin: 0.5rem auto;
+    }
+
+    .record-card-header,
+    .record-card-row {
+        gap: 0.5rem;
+    }
+
+    .record-card-row {
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .record-card-value {
+        text-align: left;
+    }
+
+    .record-card-actions .btn,
+    .record-card-actions form,
+    .record-card-actions form .btn {
         width: 100%;
     }
 

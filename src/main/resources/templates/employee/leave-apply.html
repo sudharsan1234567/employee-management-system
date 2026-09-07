@@ -20,7 +20,7 @@
     <div class="page-content">
         <div th:replace="~{fragments/layout :: alerts}"></div>
 
-        <div class="card-table p-4" style="max-width: 640px;">
+        <div class="card-table p-4 leave-form-card" style="max-width: 640px;">
             <form th:action="@{/employee/leave/apply}" method="post" novalidate>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 

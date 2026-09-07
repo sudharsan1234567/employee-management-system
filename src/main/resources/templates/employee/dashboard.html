@@ -170,7 +170,7 @@
                 <h5 class="fw-bold mb-0">Recent Attendance Logs</h5>
                 <a th:href="@{/employee/attendance}" class="btn btn-sm btn-outline-primary">View All</a>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive desktop-only">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
@@ -196,6 +196,25 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="mobile-only mobile-records">
+                <article th:each="att : ${recentAttendance}" class="record-card">
+                    <div class="record-card-header">
+                        <div class="fw-bold" th:text="${#temporals.format(att.attendanceDate, 'EEE, MMM d, yyyy')}">Date</div>
+                        <span class="badge rounded-pill px-3 py-1 flex-shrink-0"
+                              th:classappend="${att.status.name() == 'PRESENT' ? 'bg-success' : (att.status.name() == 'LATE' ? 'bg-warning text-dark' : 'bg-secondary')}"
+                              th:text="${att.status}">STATUS</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Check-in</span>
+                        <span class="record-card-value" th:text="${att.checkIn != null ? #temporals.format(att.checkIn, 'hh:mm:ss a') : '--'}">Check In</span>
+                    </div>
+                    <div class="record-card-row">
+                        <span class="record-card-label">Check-out</span>
+                        <span class="record-card-value" th:text="${att.checkOut != null ? #temporals.format(att.checkOut, 'hh:mm:ss a') : '--'}">Check Out</span>
+                    </div>
+                </article>
+                <div th:if="${#lists.isEmpty(recentAttendance)}" class="text-center text-muted py-4">No attendance records found yet.</div>
             </div>
         </div>
     </div>

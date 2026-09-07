@@ -71,7 +71,7 @@
                         <h5 class="fw-bold mb-0">Recent Employees</h5>
                         <a th:href="@{/employees}" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive desktop-only">
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
@@ -98,6 +98,24 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mobile-only mobile-records">
+                        <article th:each="emp, stat : ${recentEmployees}" th:if="${stat.index < 5}" class="record-card">
+                            <div class="record-card-header">
+                                <div>
+                                    <div class="fw-bold" th:text="${emp.firstName + ' ' + emp.lastName}">Name</div>
+                                    <div class="small text-muted text-break" th:text="${emp.email}">email</div>
+                                </div>
+                                <span class="badge rounded-pill px-3 py-2 flex-shrink-0"
+                                      th:classappend="'badge-' + ${#strings.toLowerCase(emp.status)}"
+                                      th:text="${emp.status}">Status</span>
+                            </div>
+                            <div class="record-card-row">
+                                <span class="record-card-label">Department</span>
+                                <span class="record-card-value" th:text="${emp.department?.name}">Department</span>
+                            </div>
+                        </article>
+                        <div th:if="${#lists.isEmpty(recentEmployees)}" class="text-center text-muted py-4">No employees found.</div>
                     </div>
                 </div>
             </div>
