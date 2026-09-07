@@ -7,6 +7,23 @@ document.addEventListener("DOMContentLoaded", function() {
     if (mobileMenuBtn && sidebar) {
         mobileMenuBtn.addEventListener('click', function() {
             sidebar.classList.toggle('show');
+            mobileMenuBtn.setAttribute('aria-expanded', sidebar.classList.contains('show'));
+        });
+
+        sidebar.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (sidebar.classList.contains('show') &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuBtn.contains(event.target)) {
+                sidebar.classList.remove('show');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
         });
     }
 
