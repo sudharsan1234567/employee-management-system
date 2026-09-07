@@ -80,6 +80,19 @@ body {
     min-width: 0;
 }
 
+.content-header > * {
+    min-width: 0;
+}
+
+.content-header h1,
+.content-header h2,
+.content-header h3,
+.content-header h4,
+.content-header h5,
+.content-header p {
+    overflow-wrap: anywhere;
+}
+
 .page-content {
     padding: 0 2rem 2rem 2rem;
     flex: 1;
@@ -242,6 +255,38 @@ body {
         top: 0;
         z-index: 900;
         min-height: 64px;
+        width: 100%;
+        padding: 0.75rem 1rem !important;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    }
+
+    .top-navbar > div:first-child {
+        min-width: 0;
+    }
+
+    .top-navbar h5 {
+        font-size: 1.05rem;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .top-navbar .bi-buildings-fill {
+        flex: 0 0 auto;
+    }
+
+    #mobileMenuBtn {
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    #mobileMenuBtn:focus-visible {
+        outline: 2px solid var(--info-color);
+        outline-offset: 2px;
     }
 
     .content-header {
@@ -259,6 +304,18 @@ body {
 
     .kpi-card {
         padding: 1rem;
+        min-width: 0;
+    }
+
+    .kpi-card > div:last-child {
+        min-width: 0;
+    }
+
+    .kpi-card h3,
+    .kpi-card h4,
+    .kpi-card h5,
+    .kpi-card .text-uppercase {
+        overflow-wrap: anywhere;
     }
 
     .kpi-icon {
@@ -279,6 +336,19 @@ body {
     .card-table > .p-4,
     .card-table .p-4 {
         padding: 1rem !important;
+    }
+
+    .card-table .d-flex.justify-content-between {
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .card-table .d-flex.justify-content-between > * {
+        min-width: 0;
+    }
+
+    .card-table .d-flex.justify-content-between > .text-muted {
+        text-align: left;
     }
 
     .content-header .btn,
@@ -303,6 +373,20 @@ body {
 
     .content-header .btn {
         width: 100%;
+    }
+
+    .content-header > div,
+    .content-header > a,
+    .content-header > button {
+        width: 100%;
+    }
+
+    .page-content > .row {
+        --bs-gutter-y: 1rem;
+    }
+
+    .page-content .row > [class*="col-"] {
+        min-width: 0;
     }
 
     .form-card {
