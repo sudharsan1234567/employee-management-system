@@ -6,15 +6,15 @@
 <div th:replace="~{fragments/layout :: sidebar('dashboard')}"></div>
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<div class="main-wrapper">
-    <div class="content-header">
+<div class="main-wrapper dashboard-page">
+    <div class="content-header dashboard-header">
         <h2 class="fw-bold mb-0">Dashboard Overview</h2>
         <p class="text-muted mb-0">Welcome back! Here's what's happening with your workforce today.</p>
     </div>
 
     <div class="page-content">
         <!-- KPIs -->
-        <div class="row g-4 mb-4">
+        <div class="row g-4 mb-4 dashboard-kpis">
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="kpi-card border-start border-primary border-4">
                     <div class="kpi-icon bg-primary bg-opacity-10 text-primary">

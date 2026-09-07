@@ -27,8 +27,10 @@ body {
     background-color: var(--light-bg);
     color: var(--text-primary);
     min-height: 100vh;
-    display: flex;
-    overflow-x: hidden;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
 }
 
 /* Sidebar */
@@ -43,6 +45,10 @@ body {
     z-index: 1000;
     transition: transform 0.3s ease;
     overflow-y: auto;
+}
+
+.mobile-nav-backdrop {
+    display: none;
 }
 
 .sidebar-header {
@@ -68,8 +74,8 @@ body {
 
 /* Main Content */
 .main-wrapper {
-    flex: 1;
     margin-left: 260px;
+    width: calc(100% - 260px);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -94,7 +100,8 @@ body {
 .content-header h4,
 .content-header h5,
 .content-header p {
-    overflow-wrap: anywhere;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .page-content {
@@ -308,6 +315,7 @@ textarea.form-control {
 
     .main-wrapper {
         margin-left: 240px;
+        width: calc(100% - 240px);
     }
 
     .content-header {
@@ -332,8 +340,25 @@ textarea.form-control {
         transform: translateX(0);
     }
 
+    .mobile-nav-backdrop {
+        position: fixed;
+        inset: 0;
+        display: block;
+        z-index: 950;
+        background: rgba(15, 23, 42, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-nav-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
     .main-wrapper {
         margin-left: 0;
+        width: 100%;
     }
 
     .top-navbar {
@@ -343,6 +368,7 @@ textarea.form-control {
         min-height: 64px;
         width: 100%;
         padding: 0.75rem 1rem !important;
+        background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%) !important;
         box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
     }
 
@@ -353,6 +379,14 @@ textarea.form-control {
     .top-navbar h5 {
         font-size: 1.05rem;
         line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .mobile-brand-subtitle {
+        display: block;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.7rem;
+        line-height: 1.25;
         white-space: nowrap;
     }
 
@@ -393,6 +427,40 @@ textarea.form-control {
         min-width: 0;
     }
 
+    .dashboard-kpis {
+        --bs-gutter-x: 0.75rem;
+        --bs-gutter-y: 0.75rem;
+    }
+
+    .dashboard-kpis > [class*="col-"] {
+        width: 50%;
+    }
+
+    .dashboard-kpis .kpi-card {
+        min-height: 118px;
+        padding: 0.9rem;
+        align-items: center;
+    }
+
+    .dashboard-kpis .kpi-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.15rem;
+        margin-right: 0.65rem;
+        border-radius: 50%;
+    }
+
+    .dashboard-kpis .text-uppercase {
+        font-size: 0.7rem;
+        line-height: 1.25;
+    }
+
+    .dashboard-kpis h3 {
+        font-size: 1.7rem;
+        line-height: 1.1;
+        margin-top: 0.25rem !important;
+    }
+
     .kpi-card > div:last-child {
         min-width: 0;
     }
@@ -401,7 +469,8 @@ textarea.form-control {
     .kpi-card h4,
     .kpi-card h5,
     .kpi-card .text-uppercase {
-        overflow-wrap: anywhere;
+        word-break: normal;
+        overflow-wrap: break-word;
     }
 
     .kpi-icon {
